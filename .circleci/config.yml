@@ -15,7 +15,7 @@ jobs:
           name: Show current branch
           command: echo ${CURRENT_BRANCH}
       - restore_cache:
-          key:
+          keys:
             - app-{{ checksum "package.json" }}
             - app-
       - run:
@@ -101,25 +101,25 @@ jobs:
               aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID_DEV} --paths /\*
             fi
 
-  workflows:
-    build_and_deploy:
-      jobs:
-        - build
-        - deploy-to-aws-s3:
-            requires:
-              - build
-            filters:
-              branches:
-                only:
-                  - development
-                  - staging
-                  - master
-        - deploy-to-aws-cloudfront:
-            requires:
-              - deploy-to-aws-s3
-            filters:
-              branches:
-                only:
-                  - development
-                  - staging
-                  - master
+workflow:
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy-to-aws-s3:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - master
+      - deploy-to-aws-cloudfront:
+          requires:
+            - deploy-to-aws-s3
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - master
