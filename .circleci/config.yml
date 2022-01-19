@@ -7,42 +7,42 @@ executors:
       - image: cimg/node:17.3.1
     working_directory: ~/repo
 
-  aliases:
-    - &show-current-branch-name
-      run:
-        name: Show current branch
-        command: echo ${CIRCLE_BRANCH}
-    - &restore_cache
-      restore_cache:
-        keys:
-          - app-{{ checksum "package.json" }}
-          - app-
-    - &install-dependencies
-      run:
-        name: Install dependencies
-        command: npm install
-    - &save-cache
-      save_cache:
-        paths:
-          - node_modules
-        key: app-{{ checksum "package.json" }}
-    - &install-aws-cli
-      run:
-        name: Installing AWS CLI
-        working_directory: /
-        command: |
-          sudo apt-get -y -qq update
-          sudo apt-get install -y awscli
-          sudo apt-get install -y python3-pip python-dev build-essential
-    - &build-project
-      run:
-        name: Build Project
-        command: |
-          npm install
-          npm run build
-          cd build
-          zip ../build.zip -r * .[^.]*
-          echo "Build succesful"
+aliases:
+  - &show-current-branch-name
+    run:
+      name: Show current branch
+      command: echo ${CIRCLE_BRANCH}
+  - &restore_cache
+    restore_cache:
+      keys:
+        - app-{{ checksum "package.json" }}
+        - app-
+  - &install-dependencies
+    run:
+      name: Install dependencies
+      command: npm install
+  - &save-cache
+    save_cache:
+      paths:
+        - node_modules
+      key: app-{{ checksum "package.json" }}
+  - &install-aws-cli
+    run:
+      name: Installing AWS CLI
+      working_directory: /
+      command: |
+        sudo apt-get -y -qq update
+        sudo apt-get install -y awscli
+        sudo apt-get install -y python3-pip python-dev build-essential
+  - &build-project
+    run:
+      name: Build Project
+      command: |
+        npm install
+        npm run build
+        cd build
+        zip ../build.zip -r * .[^.]*
+        echo "Build succesful"
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
